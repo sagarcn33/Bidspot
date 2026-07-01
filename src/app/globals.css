@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Bid Spot — Design Tokens
+   All values live here as CSS variables and Tailwind theme
+   tokens. Components reference semantic utilities only —
+   never raw hex or one-off px.
+   ============================================================ */
+
+@theme {
+  /* ---- Color: surfaces (light theme) ---- */
+  --color-surface-base: #fafafb;
+  --color-surface-raised: #ffffff;
+  --color-surface-overlay: #f3f4f6;
+
+  /* ---- Color: borders ---- */
+  --color-border-subtle: #e7e7ec;
+  --color-border-strong: #d3d3da;
+
+  /* ---- Color: text (AA on light surfaces) ---- */
+  --color-text-primary: #0a0a0c;
+  --color-text-secondary: #52525b;
+  --color-text-tertiary: #6b6b72;
+  --color-text-inverse: #0a0a0c; /* dark text sits on the amber accent */
+
+  /* ---- Color: accent (modernized amber, kept from brand) ---- */
+  --color-accent: #f5a623;
+  --color-accent-hover: #e29310;
+  --color-accent-active: #c67f08;
+  /* Darkened amber for amber-as-text / icons on light surfaces
+     (~5:1 on white — passes AA 4.5:1 body / 3:1 icons). Bright --accent
+     is reserved for fills, borders, glows, and the logotype. */
+  --color-accent-text: #92670a;
+
+  /* ---- Color: data-viz secondaries (darkened for AA on light) ---- */
+  --color-data-blue: #2563eb;
+  --color-data-teal: #0d9488;
+
+  /* ---- Color: feedback ---- */
+  --color-success: #16a34a;
+  --color-warning: #b7791f;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
+
+  /* ---- Typography: families ---- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* ---- Typography: scale (size / line-height) ---- */
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.375rem;
+  --text-4xl: 2.375rem;
+  --text-4xl--line-height: 2.875rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 3.5rem;
+  --text-6xl: 4rem;
+  --text-6xl--line-height: 4.5rem;
+
+  /* ---- Radius ---- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* ---- Shadow ---- */
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06), 0 12px 28px rgba(16, 24, 40, 0.10);
+  --shadow-glow-accent: 0 0 32px rgba(245, 166, 35, 0.35);
+
+  /* ---- Motion: easing (generates ease-standard utility) ---- */
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* ---- Animation: trust-bar marquee ---- */
+  --animate-marquee: marquee 38s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Track is duplicated 2x; shift by half for a seamless loop. */
+    transform: translateX(-50%);
+  }
+}
+
+/* Motion durations — referenced by helper classes and JS tokens
+   (src/lib/tokens.ts) so GSAP/Framer never carry magic numbers. */
+:root {
+  --duration-instant: 100ms;
+  --duration-fast: 180ms;
+  --duration-normal: 280ms;
+  --duration-slow: 450ms;
+}
+
+/* ============================================================
+   Base layer
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-surface-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible focus ring on every interactive element — never removed.
+     2px accent ring, 2px offset against the base surface. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Remove the default (non-:focus-visible) outline only for pointer
+     users; keyboard users always keep the ring above. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-text-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-pill);
+  }
+}
+
+/* ============================================================
+   Utilities & helpers
+   ============================================================ */
+
+@layer utilities {
+  /* Duration helpers mapped to motion tokens. */
+  .duration-instant {
+    transition-duration: var(--duration-instant);
+  }
+  .duration-fast {
+    transition-duration: var(--duration-fast);
+  }
+  .duration-normal {
+    transition-duration: var(--duration-normal);
+  }
+  .duration-slow {
+    transition-duration: var(--duration-slow);
+  }
+
+  /* Screen-reader-only content that becomes visible on focus
+     (used by the skip-to-content link). */
+  .sr-only-focusable:not(:focus):not(:focus-within) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ============================================================
+   Reduced motion — global kill-switch.
+   JS animations additionally gate on the same query via
+   src/lib/useReducedMotion.ts, but this covers CSS as a floor.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
