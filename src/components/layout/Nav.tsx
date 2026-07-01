@@ -40,7 +40,7 @@ export function Nav() {
       <div className="border-b" style={{ borderColor: "inherit" }}>
         <Container className="flex h-16 items-center justify-between">
           <Link href="#main" className="rounded-md" aria-label="BidSpot home">
-            <Logo />
+            <Logo tone={solid ? "dark" : "light"} />
           </Link>
 
           {/* Desktop nav */}
@@ -49,7 +49,12 @@ export function Nav() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm text-text-secondary transition-colors duration-fast ease-standard hover:text-text-primary"
+                className={cn(
+                  "rounded-md px-3 py-2 text-sm transition-colors duration-fast ease-standard",
+                  solid
+                    ? "text-text-secondary hover:text-text-primary"
+                    : "text-white/80 hover:text-white",
+                )}
               >
                 {link.label}
               </Link>
@@ -65,7 +70,10 @@ export function Nav() {
           {/* Mobile toggle */}
           <button
             type="button"
-            className="inline-flex size-10 items-center justify-center rounded-md text-text-primary md:hidden"
+            className={cn(
+              "inline-flex size-10 items-center justify-center rounded-md md:hidden",
+              solid ? "text-text-primary" : "text-white",
+            )}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}

@@ -20,6 +20,18 @@ export const navLinks: NavLink[] = [
   { label: "Resources", href: "#case-studies" },
 ];
 
+/** Cross-fading hero backdrop images (self-hosted in /public/hero).
+ *  Lifestyle shots of people using devices across channels. */
+export type HeroImage = { src: string; alt: string };
+export const heroImages: HeroImage[] = [
+  { src: "/hero/hero-01.jpg", alt: "Two colleagues reviewing a campaign on a laptop" },
+  { src: "/hero/hero-02.jpg", alt: "Smartphone home screen filled with apps" },
+  { src: "/hero/hero-03.jpg", alt: "Overhead view of a team working across laptops and devices" },
+  { src: "/hero/hero-04.jpg", alt: "Person using a smartphone outdoors" },
+  { src: "/hero/hero-05.jpg", alt: "Colleagues celebrating results at a workstation" },
+  { src: "/hero/hero-06.jpg", alt: "Reviewing campaign analytics on a laptop" },
+];
+
 /** Supply/demand partners for the trust marquee. */
 export type Partner = { name: string };
 export const partners: Partner[] = [

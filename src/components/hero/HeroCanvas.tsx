@@ -21,12 +21,12 @@ const FIELD_COUNT = 1200; // drifting depth particles
 const NODE_COUNT = 64; // network nodes (proximity lines) — O(n^2) kept small
 const LINK_DIST = 3.4;
 
-/** Dark data-viz palette tuned to read on the light surface. */
+/** Bright data-viz palette — glows via additive blending over the dark
+ *  photo backdrop the particle network now sits on. */
 const PALETTE = [
-  new THREE.Color("#1e293b"), // slate navy
-  new THREE.Color("#2563eb"), // data blue
-  new THREE.Color("#0d9488"), // data teal
   new THREE.Color("#f5a623"), // amber accent
+  new THREE.Color("#4ea1ff"), // data blue
+  new THREE.Color("#2dd4bf"), // data teal
 ];
 
 export function HeroCanvas() {
@@ -76,12 +76,11 @@ export function HeroCanvas() {
       size: 0.1,
       vertexColors: true,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.75,
       depthWrite: false,
-      // Normal (not additive) blending: on a light surface additive washes
-      // every color toward white and disappears. Normal composites dark
-      // points over white so they stay legible.
-      blending: THREE.NormalBlending,
+      // Additive blending makes the colored points glow against the dark
+      // photo backdrop behind the hero.
+      blending: THREE.AdditiveBlending,
     });
     const field = new THREE.Points(fieldGeo, fieldMat);
     scene.add(field);
@@ -101,11 +100,11 @@ export function HeroCanvas() {
     nodeGeo.setAttribute("position", new THREE.BufferAttribute(nodePos, 3));
     const nodeMat = new THREE.PointsMaterial({
       size: 0.24,
-      color: new THREE.Color("#1e293b"),
+      color: new THREE.Color("#f5a623"),
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.95,
       depthWrite: false,
-      blending: THREE.NormalBlending,
+      blending: THREE.AdditiveBlending,
     });
     const nodes = new THREE.Points(nodeGeo, nodeMat);
     scene.add(nodes);
@@ -115,10 +114,10 @@ export function HeroCanvas() {
     const lineGeo = new THREE.BufferGeometry();
     lineGeo.setAttribute("position", new THREE.BufferAttribute(linePos, 3));
     const lineMat = new THREE.LineBasicMaterial({
-      color: new THREE.Color("#2563eb"),
+      color: new THREE.Color("#4ea1ff"),
       transparent: true,
-      opacity: 0.16,
-      blending: THREE.NormalBlending,
+      opacity: 0.22,
+      blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
     const links = new THREE.LineSegments(lineGeo, lineMat);
@@ -242,30 +241,9 @@ export function HeroCanvas() {
     };
   }, [reduced]);
 
-  // Static CSS fallback: WebGL missing/lost, or as the reduced-motion floor.
-  if (failed) {
-    return <StaticHeroBackdrop />;
-  }
+  // The photo slideshow + scrim provide the backdrop; on WebGL failure we
+  // simply drop the particle overlay and let those layers stand alone.
+  if (failed) return null;
 
-  return (
-    <>
-      <div ref={mountRef} className="absolute inset-0" aria-hidden="true" />
-      {/* Vignette + gradient wash layered over the canvas for legibility. */}
-      <StaticHeroBackdrop overlayOnly />
-    </>
-  );
-}
-
-function StaticHeroBackdrop({ overlayOnly = false }: { overlayOnly?: boolean }) {
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0"
-      style={{
-        background: overlayOnly
-          ? "radial-gradient(60% 55% at 50% 0%, rgba(245,166,35,0.12), transparent 70%), linear-gradient(to bottom, transparent 45%, var(--color-surface-base))"
-          : "radial-gradient(50% 50% at 50% 30%, rgba(37,99,235,0.10), transparent 70%), radial-gradient(45% 45% at 60% 60%, rgba(245,166,35,0.10), transparent 70%), var(--color-surface-base)",
-      }}
-    />
-  );
+  return <div ref={mountRef} className="absolute inset-0" aria-hidden="true" />;
 }
